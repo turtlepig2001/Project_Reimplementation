@@ -38,3 +38,4 @@ temp/util/epoch_timer.py
 temp/util/tokenizer.py
 note/spacy.md
 note/collections_and_Counter.md
+test.ipynb

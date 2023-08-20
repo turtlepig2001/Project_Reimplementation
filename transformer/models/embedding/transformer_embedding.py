@@ -1,7 +1,7 @@
 '''
 Date: 2023-08-19 23:18:08
 LastEditors: turtlepig
-LastEditTime: 2023-08-20 00:05:37
+LastEditTime: 2023-08-21 00:37:09
 Description:  Final transformer embedding
 '''
 
@@ -16,7 +16,7 @@ class TransformerEmbedding(nn.Module):
     positional encoding can give positional information to network
     """
 
-    def __init__(self, vocab_size, d_model, max_len, drop_out, device):
+    def __init__(self, vocab_size, d_model, max_len, drop_prob, device):
         r"""
         class for word embedding that included positional information
 
@@ -26,7 +26,7 @@ class TransformerEmbedding(nn.Module):
         super(TransformerEmbedding,self).__init__()
         self.tok_emb = TokenEmbedding(vocab_size, d_model)
         self.pos_emb = PositionalEncoding(d_model, max_len, device)
-        self.drop_out = nn.Dropout(p = drop_out)
+        self.drop_out = nn.Dropout(p = drop_prob)
 
     def forward(self,x):
         tok_emb = self.tok_emb(x)

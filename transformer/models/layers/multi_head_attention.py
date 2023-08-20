@@ -1,17 +1,17 @@
 '''
 Date: 2023-08-20 00:16:26
 LastEditors: turtlepig
-LastEditTime: 2023-08-20 19:08:28
+LastEditTime: 2023-08-21 00:03:04
 Description:  Multi-Head Attention
 '''
 import torch.nn as nn
 
 from models.layers.scale_dot_product_attention import ScaleDotProductAttention
 
-class MulitHeadAttention(nn.Module):
+class MultiHeadAttention(nn.Module):
     
     def __init__(self, d_model, n_head):
-        super(MulitHeadAttention, self).__init__()
+        super(MultiHeadAttention, self).__init__()
         self.n_head = n_head
         self.attention = ScaleDotProductAttention()
         # 本质是一组映射权重
@@ -26,7 +26,16 @@ class MulitHeadAttention(nn.Module):
         q, k, v = self.w_q(q), self.w_k(k), self.w_v(v)
 
         # 2. split tensor by number of heads
+        q, k, v = self.split(q), self.split(k), self.split(v)
 
+        # 3. do scale dot product to compute similarity
+        out, attention = self.attention(q, k, v, mask)
+
+        # 4. concat and pass to linear layer
+        out = self.concat(out)
+        out = self.w_concat(out)
+
+        return out
 
     def split(self, tensor):
         r"""

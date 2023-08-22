@@ -1,7 +1,7 @@
 '''
 Date: 2023-08-20 00:24:06
 LastEditors: turtlepig
-LastEditTime: 2023-08-20 18:11:28
+LastEditTime: 2023-08-22 18:11:48
 Description:  Scale Dot Product Attention
 '''
 import math
@@ -18,7 +18,7 @@ class ScaleDotProductAttention(nn.Module):
     """
     def __init__(self):
         super(ScaleDotProductAttention, self).__init__()
-        self.softmax = nn.Softmax(dim = 1)
+        self.softmax = nn.Softmax(dim = -1)
     
     def forward(self, q, k, v , mask =None, e = 1e-12):
         # input is 4 dimension tensor
@@ -32,7 +32,7 @@ class ScaleDotProductAttention(nn.Module):
 
         # 2. apply masking (opt)
         if mask is not None:
-            score = score.masked_fill(mask == 0, -10000)
+            score = score.masked_fill(mask == 0, -1e9)
 
         # 3. pass them softmax to make [0, 1] range
         score = self.softmax(score)

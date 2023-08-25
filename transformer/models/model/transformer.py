@@ -50,6 +50,8 @@ class Transformer(nn.Module):
     def make_trg_mask(self, trg):
         # 确保在预测目标序列时不会使用未来位置的信息
 
+        # initial input batchsize x seq_len after the embeddin : batch_size x seq_len x d
+
         trg_pad_mask = (trg != self.trg_pad_idx).unsqueeze(1).unsqueeze(3)
         # batch_size x 1 x trg_seq_len x 1
         trg_len = trg.shape[1]

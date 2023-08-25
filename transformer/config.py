@@ -21,7 +21,7 @@ drop_prob = 0.1
 # optimizer parameters setting
 init_lr = 1e-5
 factor = 0.9
-adam_eps = 5e-9
+adam_eps = 5e-9 # epsilon 
 patience = 10 #早停耐心值
 warmup = 100
 epoch = 1000

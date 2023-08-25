@@ -1,12 +1,12 @@
 '''
 Date: 2023-08-19 00:44:18
 LastEditors: turtlepig
-LastEditTime: 2023-08-19 00:44:18
+LastEditTime: 2023-08-25 22:29:23
 Description:  
 '''
 import spacy
 
-class tokenizer:
+class Tokenizer:
 
     def __init__(self):
         self.spacy_de = spacy.load('de_core_news_sm')

@@ -1,7 +1,7 @@
 '''
 Date: 2023-08-20 23:54:26
 LastEditors: turtlepig
-LastEditTime: 2023-08-21 00:24:31
+LastEditTime: 2023-08-26 22:58:42
 Description:  Decoder Layer
 '''
 import torch.nn as nn
@@ -31,7 +31,7 @@ class DecoderLayer(nn.Module):
     def forward(self, dec, enc, trg_mask, src_mask):
         # 1. compute self attention
         _x = dec
-        x = self.self_attention(q = x, k = x, v = x, mask = trg_mask)
+        x = self.self_attention(q = dec, k = dec, v = dec, mask = trg_mask)
 
         # 2. add and norm
         x = self.drop_out1(x)

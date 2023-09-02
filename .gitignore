@@ -39,3 +39,8 @@ temp/util/tokenizer.py
 note/spacy.md
 note/collections_and_Counter.md
 test.ipynb
+transformer/__pycache__/config.cpython-39.pyc
+transformer/__pycache__/data.cpython-39.pyc
+transformer/util/__pycache__/__init__.cpython-39.pyc
+transformer/util/__pycache__/data_loader.cpython-39.pyc
+transformer/util/__pycache__/tokenizer.cpython-39.pyc

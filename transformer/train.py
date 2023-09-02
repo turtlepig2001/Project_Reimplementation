@@ -1,7 +1,7 @@
 '''
 Date: 2023-08-25 22:26:45
 LastEditors: turtlepig
-LastEditTime: 2023-08-26 23:43:37
+LastEditTime: 2023-09-02 23:15:18
 Description:  
 '''
 import math
@@ -20,7 +20,7 @@ def count_parameters(model):
 
 def initialize_weights(m):
     if hasattr(m, 'weight') and m.weight.dim() > 1: # 是一个权重矩阵而非偏置项
-        nn.init.kaiming_uniform(m.weight.data)
+        nn.init.kaiming_uniform(m.weight.data) # 初始化权重
 
 model = Transformer(
         src_pad_idx = src_pad_idx,
@@ -37,7 +37,7 @@ model = Transformer(
         device = device
     ).to(device)
 
-print(f'The model has {count_parameters(model):,} trainable parameters')
+print(f'The model has {count_parameters(model):,} trainable parameters') # 千分位分隔
 model.apply(initialize_weights)
 optimizer = Adam(params = model.parameters(), lr = init_lr, weight_decay = weight_decay, eps = adam_eps)
 
@@ -93,7 +93,7 @@ def evaluate(model, iterator, criterion):
             for j in range(batch_size):
                 try:
                     trg_words = idx_to_word(batch.trg[j], loader.target.vocab)
-                    output_words = output[j].max(dim = 1)[1] # ????
+                    output_words = output[j].max(dim = 1)[1] # max returns tensor and indices, we need indices
                     output_words = idx_to_word(output_words, loader.target.vocab)
                     bleu = get_bleu(hypothesis = output_words.split(), reference = trg_words.split())
                     total_bleu.append(bleu)
@@ -105,3 +105,43 @@ def evaluate(model, iterator, criterion):
 
     batch_bleu = sum(batch_bleu) / len(batch_bleu)
     return epoch_loss / len(iterator), batch_bleu
+
+def run(total_epoch, best_loss):
+    train_losses, test_losses, bleus = [], [], []
+    for step in range(total_epoch):
+        start_time = time.time()
+        train_loss = train(model, train_iter, optimizer, criterion, clip)
+        valid_loss, bleu = evaluate(model, valid_iter, criterion)
+        end_time = time.time()
+
+        if step > warmup:
+            scheduler.step(valid_loss)  # 学习率调整
+
+        train_losses.append(train_loss)
+        test_losses.append(valid_loss)
+
+        epoch_mins, epoch_secs = epoch_timer(start_time, end_time)
+        
+        if valid_loss < best_loss:
+            best_loss = valid_loss
+            torch.save(model.state_dict(), 'saved/model_{0}.pt'.format(valid_loss)) # 0是占位符
+
+        f = open('result/train_loss.txt', 'w')
+        f.write(str(train_losses))
+        f.close()
+
+        f = open('result/bleu.txt', 'w')
+        f.write(str(bleus))
+        f.close()
+
+        f = open('result/test_loss.txt', 'w')
+        f.write(str(test_losses))
+        f.close()
+
+        print(f'Epoch: {step+1} | Time: {epoch_mins}m {epoch_secs}s')
+        print(f'\tTrain Loss: {train_loss:.3f} | Train PPL: {math.exp(train_loss):7.3f}')
+        print(f'\tVal Loss: {valid_loss:.3f} |  Val PPL: {math.exp(valid_loss):7.3f}')
+        print(f'\tBLEU Score: {bleu:.3f}')
+
+if __name__ == '__main__':
+    run(total_epoch = epoch, best_loss = inf)
